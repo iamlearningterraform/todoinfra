@@ -100,7 +100,7 @@ module "vm_username" {
     source = "../modules/azurerm_key_vault_secret"
     key_vault_name = "sonukitijori"
     resource_group_name = "rg-todoapp"
-    secret_name = "username1"
+    secret_name = "vm-username"
     secret_value = "devopsadmin"
   
 }
@@ -114,7 +114,64 @@ module "vm_password" {
     source = "../modules/azurerm_key_vault_secret"
     key_vault_name = "sonukitijori"
     resource_group_name = "rg-todoapp"
-    secret_name = "password1"
+    secret_name = "vm-password"
     secret_value = "Redhat@12345"
+  
+}
+
+
+
+module "db_server_username" {
+
+    depends_on = [ module.key_vault ]
+
+    source = "../modules/azurerm_key_vault_secret"
+    key_vault_name = "sonukitijori"
+    resource_group_name = "rg-todoapp"
+    secret_name = "dbusername1"
+    secret_value = "devopsdbadmin"
+  
+}
+
+
+module "db_server_password" {
+
+    depends_on = [ module.key_vault ]
+
+    source = "../modules/azurerm_key_vault_secret"
+    key_vault_name = "sonukitijori"
+    resource_group_name = "rg-todoapp"
+    secret_name = "dbpassword1"
+    secret_value = "Redhat@12345"
+  
+}
+
+
+
+module "sql_server" {
+
+    depends_on = [ module.resource_group,module.key_vault,module.db_server_username,module.db_server_password ]
+
+    source = "../modules/azurerm_mssql_server"
+    sql_server_name = "todoappdbserver4271"
+    resource_group_name = "rg-todoapp"
+    location = "uksouth"
+    key_vault_name = "sonukitijori"
+    sql_db_username = "dbusername1"
+    sql_db_password = "dbpassword1"
+
+    
+  
+}
+
+
+module "sql_db" {
+
+    depends_on = [ module.resource_group, module.sql_server ]
+
+    source = "../modules/azurerm_mssql_database"
+    sql_server_name = "todoappdbserver4271"
+    resource_group_name = "rg-todoapp"
+    sql_databse_name = "db001"
   
 }
