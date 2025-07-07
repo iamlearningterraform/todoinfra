@@ -8,6 +8,12 @@ module "resource_group" {
   
 }
 
+module "resource_group" {
+    source = "../modules/azurerm_resource_group"
+    resource_group_name = "rg-todoapp1"
+    rg_location = "uksouth"
+}
+
 # create virtual network for infra
 
 
